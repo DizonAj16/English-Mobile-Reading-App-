@@ -3,8 +3,9 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import '../../widgets/theme_toggle.dart';
 import '../../core/services/auth_service.dart';
-import '../stories/story_list_page.dart';
-import '../quiz/quiz_page.dart';
+import '../profile page/profile_page.dart';
+import '../dashboard/dashboard_page.dart';
+import '../quiz/task_page.dart';
 import '../progress/progress_page.dart';
 import '../badges/badge_page.dart';
 
@@ -18,10 +19,18 @@ class _HomePageState extends State<HomePage> {
 
   // Pages for bottom navigation
   final List<Widget> _pages = [
-    StoryListPage(),
-    QuizPage(),
-    ProgressPage(),
-    BadgePage(),
+    DashboardPage(), // Home
+    TaskPage(), // Tasks/Activities
+    ProgressPage(), // Assessment
+    BadgePage(), // Progress & Unlocking
+  ];
+
+  // Titles for each tab
+  final List<String> _titles = [
+    "Dashboard",
+    "Tasks & Activities",
+    "Assessment",
+    "Badges",
   ];
 
   void _onItemTapped(int index) {
@@ -37,7 +46,10 @@ class _HomePageState extends State<HomePage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text("Reading App", style: GoogleFonts.poppins()),
+        title: Text(
+          _titles[_selectedIndex], // Dynamically update the title
+          style: GoogleFonts.poppins(),
+        ),
         actions: [
           ThemeToggle(), // Theme toggle button
         ],
@@ -50,57 +62,99 @@ class _HomePageState extends State<HomePage> {
               decoration: BoxDecoration(color: Colors.deepPurpleAccent),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min, // Ensures it doesn't expand unnecessarily
                 children: [
-                  CircleAvatar(
-                    radius: 40,
-                    child: Icon(Icons.person_2, size: 50, color: Colors.white),
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        PageRouteBuilder(
+                          transitionDuration: Duration(milliseconds: 500), // Smooth transition duration
+                          pageBuilder: (context, animation, secondaryAnimation) => StudentProfilePage(),
+                          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                            return FadeTransition(
+                              opacity: animation,
+                              child: ScaleTransition(
+                                scale: Tween<double>(begin: 0.8, end: 1.0).animate(animation), // Smooth zoom effect
+                                child: child,
+                              ),
+                            );
+                          },
+                        ),
+                      );
+                    },
+                    child: Hero(
+                      tag: 'studentAvatar',
+                      child: CircleAvatar(
+                        radius: 40, // Increase the radius
+                        backgroundColor: Colors.grey[300], // Optional: Background color
+                        child: ClipOval(
+                          child: Image.asset(
+                            "assets/placeholders/student-placeholder.png",
+                            width: 90, // Adjust width to fit properly inside CircleAvatar
+                            height: 90, // Adjust height to match
+                            fit: BoxFit.cover, // Ensures the image scales well
+                          ),
+                        ),
+                      ),
+                    ),
                   ),
-                  SizedBox(height: 10),
+                  SizedBox(height: 5), // Reduced space to fit better
                   Text(
                     user?.name ?? "Loading...", // Display fetched user name
-                    style: GoogleFonts.poppins(fontSize: 20, color: Colors.white),
+                    style: GoogleFonts.poppins(fontSize: 18, color: Colors.white),
+                    textAlign: TextAlign.center,
+                    overflow: TextOverflow.ellipsis, // Prevents overflow
+                  ),
+                  Text(
+                    "Grade 5 Student",
+                    style: GoogleFonts.poppins(fontSize: 12, color: Colors.white),
+                    textAlign: TextAlign.center,
+                    overflow: TextOverflow.ellipsis, // Prevents overflow
                   ),
                 ],
               ),
             ),
             ListTile(
-              leading: Icon(Icons.home),
-              title: Text("Home"),
-              onTap: () {
-                Navigator.pop(context);
-                _onItemTapped(0);
-              },
-            ),
-            ListTile(
-              leading: Icon(Icons.menu_book),
-              title: Text("Stories"),
-              onTap: () {
-                Navigator.pop(context);
-                _onItemTapped(0);
-              },
-            ),
-            ListTile(
-              leading: Icon(Icons.quiz),
-              title: Text("Quizzes"),
-              onTap: () {
-                Navigator.pop(context);
-                _onItemTapped(1);
-              },
-            ),
-            ListTile(
-              leading: Icon(Icons.bar_chart),
-              title: Text("Progress"),
-              onTap: () {
-                Navigator.pop(context);
-                _onItemTapped(2);
-              },
-            ),
-            ListTile(
               leading: Icon(Icons.emoji_events),
-              title: Text("Badges"),
+              title: Text("Achievements"),
               onTap: () {
-                Navigator.pop(context);
-                _onItemTapped(3);
+                // Navigate to Achievements Page
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.history),
+              title: Text("Reading History"),
+              onTap: () {
+                // Navigate to Reading History Page
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.settings),
+              title: Text("Settings"),
+              onTap: () {
+                // Navigate to Settings Page
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.help),
+              title: Text("Help & Support"),
+              onTap: () {
+                // Navigate to Help & Support Page
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.info),
+              title: Text("About the App"),
+              onTap: () {
+                // Navigate to About Page
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.feedback),
+              title: Text("Feedback"),
+              onTap: () {
+                // Navigate to Feedback Page
               },
             ),
             Divider(),
@@ -143,10 +197,10 @@ class _HomePageState extends State<HomePage> {
         unselectedItemColor: Colors.grey,
         onTap: _onItemTapped,
         items: [
-          BottomNavigationBarItem(icon: Icon(Icons.menu_book), label: "Stories"),
-          BottomNavigationBarItem(icon: Icon(Icons.quiz), label: "Quizzes"),
-          BottomNavigationBarItem(icon: Icon(Icons.bar_chart), label: "Progress"),
-          BottomNavigationBarItem(icon: Icon(Icons.emoji_events), label: "Badges"),
+          BottomNavigationBarItem(icon: Icon(Icons.home_filled), label: "Home"),
+          BottomNavigationBarItem(icon: Icon(Icons.task), label: "Tasks/Activities"),
+          BottomNavigationBarItem(icon: Icon(Icons.assignment), label: "Assessment"),
+          BottomNavigationBarItem(icon: Icon(Icons.lock_open), label: "Progress & Unlocking"),
         ],
       ),
     );

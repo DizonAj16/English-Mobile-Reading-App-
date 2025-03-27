@@ -85,7 +85,7 @@ class _LoginPageState extends State<LoginPage> {
                   SizedBox(height: 30),
 
                   // Email Field
-                  TextFormField(
+                  TextFormField( 
                     controller: emailController,
                     decoration: InputDecoration(
                       labelText: "Email",

@@ -35,5 +35,7 @@ flutter:
   assets:
     - assets/lotties/
     - assets/logos/
-    - assets//badges/
+    - assets/badges/
+    - assets/placeholders/
+
 

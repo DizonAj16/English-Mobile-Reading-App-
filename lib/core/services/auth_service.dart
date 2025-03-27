@@ -133,7 +133,7 @@ class AuthService with ChangeNotifier {
     try {
       _showLoadingDialog(context); // Show loading dialog
 
-      await Future.delayed(Duration(milliseconds: 500)); // Ensure dialog appears
+      await Future.delayed(Duration(milliseconds: 2500)); // Ensure dialog appears
       await _auth.signOut(); // Perform logout
 
       _user = null;
